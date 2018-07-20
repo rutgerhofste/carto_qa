@@ -53,6 +53,12 @@
         maxZoom: 18,
         zIndex: 10
       }).addTo(map);
+      // Adding Client
+      var client = new carto.Client({
+        apiKey: 'default_public',
+        username: 'wri-playground'
+      });
+      
       // Code will go here end
     </script>
   </body>
