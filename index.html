@@ -41,6 +41,17 @@
     </div>
     <script>
       // code will go here!
+      // Adding Voyager Basemap
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
+        maxZoom: 18
+      }).addTo(map);
+
+      // Adding Voyager Labels
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        zIndex: 10
+      }).addTo(map);
+      // Code will go here end
     </script>
   </body>
 </html>
