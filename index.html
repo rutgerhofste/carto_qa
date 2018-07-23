@@ -1,61 +1,75 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html>
-  <head>
-    <title>Single layer | CARTO</title>
-    <meta name="viewport" content="initial-scale=1.0">
-    <meta charset="utf-8">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700|Open+Sans:300,400,600" rel="stylesheet">
-    <!-- Include Leaflet -->
-    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
-    <link href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" rel="stylesheet">
-    <!-- Include CARTO.js -->
-    <script src="https://libs.cartocdn.com/carto.js/v4.1.1/carto.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:600" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
-  </head>
-  <body>
-    <div id="map">
+<head>
+  <title>Query layer | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <!-- Include CARTO VL JS -->
+  <script src="https://libs.cartocdn.com/carto-vl/v0.5.3/carto-vl.min.js"></script>
+  <!-- Include Mapbox GL JS -->
+  <script src="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.js"></script>
+  <!-- Include Mapbox GL CSS -->
+  <link href="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://carto.com/developers/carto-vl/examples/maps/style.css" rel="stylesheet">
+</head>
+<body>
+  <div id="map"></div>
+  <aside class="toolbox">
+    <div class="box">
+      <header>
+        <h1>SQL Source layer</h1>
+      </header>
+      <section>
+        <p class="description open-sans">Use a SQL query as a source</p>
+      </section>
+      <footer class="js-footer"></footer>
     </div>
-    <!-- Description -->
-    <aside class="toolbox">
-      <div class="box">
-        <header>
-          <h1>Add a layer</h1>
-          <button class="github-logo js-source-link"></button>
-        </header>
-        <section>
-          <p class="description open-sans">Add one CARTO layer to your map.</p>
-        </section>
-        <footer class="js-footer"></footer>
-      </div>
-    </aside>
+  </aside>
+  <div id="loader">
+    <div class="CDB-LoaderIcon CDB-LoaderIcon--big">
+      <svg class="CDB-LoaderIcon-spinner" viewBox="0 0 50 50">
+        <circle class="CDB-LoaderIcon-path" cx="25" cy="25" r="20" fill="none"></circle>
+      </svg>
+    </div>
+  </div>
+  <script>
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+      center: [0, 30],
+      zoom: 3,
+      scrollZoom: true,
+      dragRotate: false,
+      touchZoomRotate: false,
+    });
 
-    <script>
-      const map = L.map('map').setView([30, 0], 3);
-      map.scrollWheelZoom.disable();
+    // Define user
+    carto.setDefaultAuth({
+      user: 'wri-playground',
+      apiKey: 'default_public'
+    });
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      }).addTo(map);
+    // Define layer
+    const source = new carto.source.SQL(`
+      SELECT *
+        FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v01
+    `);
+    const viz = new carto.Viz(`
+      width: 8
+      color: #6A5ACD
+      strokeWidth: 0.5
+      strokeColor: #191970
+    `);
+    const layer = new carto.Layer('layer', source, viz);
 
-      const client = new carto.Client({
-        apiKey: 'default_public',
-        username: 'wri-playground'
-      });
+    layer.addTo(map, 'watername_ocean');
+    layer.on('loaded', hideLoader);
 
-      const source = new carto.source.Dataset('y2018m07d18_rh_upload_hydrobasin_carto_v01_v01');
-      const style = new carto.style.CartoCSS(`
-        #layer {
-          marker-width: 7;
-          marker-fill: #EE4D5A;
-          marker-line-color: #FFFFFF;
-        }
-      `);
-      const layer = new carto.layer.Layer(source, style);
-
-      client.addLayer(layer);
-      client.getLeafletLayer().addTo(map);
-    </script>
-  </body>
+    function hideLoader() {
+      document.getElementById('loader').style.opacity = '0';
+    }
+  </script>
+</body>
 </html>
+
+      
