@@ -1,7 +1,7 @@
       <!DOCTYPE html>
 <html>
 <head>
-  <title>Query layer | CARTO</title>
+  <title>Aqueduct 3.0 QA | CARTO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <!-- Include CARTO VL JS -->
@@ -71,7 +71,10 @@
        #990000,
        #808080])
       strokeWidth: 0.5
-      strokeColor: #191970
+      strokeColor:#4E4E4E
+      @pfaf_id: $pfaf_id
+      @waterstress_raw_dimensionless_30spfaf06: $waterstress_raw_dimensionless_30spfaf06
+
     `);
 
 
@@ -84,6 +87,32 @@
     function hideLoader() {
       document.getElementById('loader').style.opacity = '0';
     }
+
+    // Interactivity
+    /*
+    const interactivity = new carto.Interactivity(layer);
+    interactivity.on('featureEnter', featureEvent => {
+      featureEvent.features[0].strokeColor.blendTo('rgba(255, 0, 0, 0.5)', 100);
+      featureEvent.features[0].strokeWidth.blendTo(5);
+    });
+    interactivity.on('featureLeave', featureEvent => {
+      featureEvent.features[0].strokeColor.reset();
+      featureEvent.features[0].strokeWidth.reset();
+    });
+      */
+
+
+    const interactivity = new carto.Interactivity(layer);
+    interactivity.on('featureClick', featureEvent => {
+        const coords = featureEvent.coordinates;
+        const feature = featureEvent.features[0];
+        new mapboxgl.Popup()
+            .setLngLat([coords.lng, coords.lat])
+            .setHTML(`<p>pfaf_id: ${feature.variables.pfaf_id.value}</p><br/>
+                      <p>waterstress_raw_dimensionless_30spfaf06: ${feature.variables.waterstress_raw_dimensionless_30spfaf06.value}</p>`)
+            .addTo(map);
+    });
+
   </script>
 </body>
 </html>
