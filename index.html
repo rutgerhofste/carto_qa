@@ -46,7 +46,7 @@
     // Define user
     carto.setDefaultAuth({
       user: 'wri-playground',
-      apiKey: 'default_public'
+      apiKey: 'HhGuS9RpAvNVj0ALin5uBw' // read only key.
     });
 
     // Define layer
@@ -87,7 +87,7 @@
                        WHERE r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
 
 
-
+    
     const source = new carto.source.SQL(sql3);
 
     const viz = new carto.Viz(`
