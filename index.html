@@ -17,10 +17,67 @@
   <aside class="toolbox">
     <div class="box">
       <header>
-        <h1>Test</h1>
+        <h1>Select Layer</h1>
       </header>
       <section>
-        <p class="description open-sans">Style, Popup and Join</p>
+        <p class="description open-sans">Update the source of your layers</p>
+        <div id="controls">
+          <ul class="actions">
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('year',2014,12)" id="annual" checked>
+              <label for="annual">Annual</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,1)" id="jan">
+              <label for="jan">January</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,2)" id="feb">
+              <label for="feb">February</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,3)" id="mar">
+              <label for="jan">March</label>
+            </li>            
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,4)" id="apr">
+              <label for="apr">April</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,5)" id="may">
+              <label for="may">May</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,6)" id="jun">
+              <label for="jun">June</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,7)" id="jul">
+              <label for="jul">July</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,8)" id="aug">
+              <label for="aug">August</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,9)" id="sep">
+              <label for="sep">September</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,10)" id="oct">
+              <label for="oct">October</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,11)" id="nov">
+              <label for="nov">November</label>
+            </li>
+            <li>
+              <input type="radio" name="source" onclick="updateLayer('month',2014,12)" id="dec">
+              <label for="dec">December</label>
+            </li>            
+         </ul>
+          <div id="info"></div>
+        </div>
       </section>
       <footer class="js-footer"></footer>
     </div>
@@ -35,7 +92,7 @@
   <script>
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
       center: [0, 30],
       zoom: 3,
       scrollZoom: true,
@@ -46,13 +103,15 @@
     // Define user
     carto.setDefaultAuth({
       user: 'wri-playground',
-      apiKey: 'HhGuS9RpAvNVj0ALin5uBw' // read only key.
+      apiKey: 'default_public'
     });
 
-    // Define layer
-    var sql = `SELECT l.pfaf_id, l.the_geom, l.the_geom_webmercator, l.cartodb_id, r.pfafid_30spfaf06, r.temporal_resolution, r.year, r.month, r.waterstress_label_dimensionless_30spfaf06, r.waterstress_category_dimensionless_30spfaf06, r.waterstress_score_dimensionless_30spfaf06, r.waterstress_raw_dimensionless_30spfaf06, r.avg1y_ols_ols10_weighted_waterstress_dimensionless_30spfaf06, r.avg1y_ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_ptotww_m_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l, y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r WHERE l.pfaf_id = r.pfafid_30spfaf06 AND r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
 
-    // Suggestion from Stack Overflow
+/*
+    // Define layer
+    var sql = `SELECT l.pfaf_id,l.the_geom, l.the_geom_webmercator, l.cartodb_id, r.pfafid_30spfaf06, r.temporal_resolution, r.year, r.month, r.waterstress_label_dimensionless_30spfaf06, r.waterstress_category_dimensionless_30spfaf06, r.waterstress_score_dimensionless_30spfaf06, r.waterstress_raw_dimensionless_30spfaf06, r.avg1y_ols_ols10_weighted_waterstress_dimensionless_30spfaf06, r.avg1y_ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_ptotww_m_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l, y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r WHERE l.pfaf_id = r.pfafid_30spfaf06 AND r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
+
+    // Suggestion from Stack Overflow, this format wont work.
     var sql2 = `SELECT l.pfaf_id,
                        l.the_geom,
                        l.the_geom_webmercator,
@@ -69,26 +128,20 @@
                        r.avg1y_ols_ols10_waterstress_dimensionless_30spfaf06,
                        r.ols_ols10_waterstress_dimensionless_30spfaf06,
                        r.ols_ols10_ptotww_m_30spfaf06 
-                       FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_simplified_v02 l 
+                       FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l 
                        INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r 
                         ON l.pfaf_id = r.pfafid_30spfaf06 
                        WHERE r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
-
+*/
     // Minimizing query
-    var sql3 = `SELECT l.pfaf_id,
-                       l.cartodb_id,
-                       l.the_geom,
-                       l.the_geom_webmercator,
-                       r.waterstress_label_dimensionless_30spfaf06,
-                       r.waterstress_raw_dimensionless_30spfaf06
-                       FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_simplified_v02 l 
-                       INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r 
-                        ON l.pfaf_id = r.pfafid_30spfaf06 
-                       WHERE r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
+    function get_query(temporal_resolution,year,month){
+      var sql = `SELECT l.pfaf_id, l.cartodb_id, l.the_geom, l.the_geom_webmercator, r.waterstress_label_dimensionless_30spfaf06,r.waterstress_raw_dimensionless_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r ON l.pfaf_id = r.pfafid_30spfaf06 WHERE r.year = ${year} AND r.month = ${month} AND r.temporal_resolution = '${temporal_resolution}'`
+    return sql  
+    }
 
-
-    
-    const source = new carto.source.SQL(sql3);
+    // Inititate Layer
+    sql_init = get_query('year',2014,12)
+    const source = new carto.source.SQL(sql_init );
 
     const viz = new carto.Viz(`
       color: ramp(buckets($waterstress_label_dimensionless_30spfaf06,
@@ -115,27 +168,31 @@
 
 
     const layer = new carto.Layer('layer', source, viz);
-
     layer.addTo(map, 'watername_ocean');
-
     layer.on('loaded', hideLoader);
+
+    // Define sources
+    function updateSource(temporal_resolution,year,month){
+      sql = get_query(temporal_resolution,year,month)
+      console.log(sql)
+      var source = new carto.source.SQL(sql)
+      return source
+    }
+
+
+    function updateLayer(temporal_resolution,year,month) {
+      console.log(temporal_resolution,year,month)
+      var source = updateSource(temporal_resolution,year,month)
+      layer.update(source, viz);
+    }
+
+
 
     function hideLoader() {
       document.getElementById('loader').style.opacity = '0';
     }
 
-    // Interactivity
-    /*
-    const interactivity = new carto.Interactivity(layer);
-    interactivity.on('featureEnter', featureEvent => {
-      featureEvent.features[0].strokeColor.blendTo('rgba(255, 0, 0, 0.5)', 100);
-      featureEvent.features[0].strokeWidth.blendTo(5);
-    });
-    interactivity.on('featureLeave', featureEvent => {
-      featureEvent.features[0].strokeColor.reset();
-      featureEvent.features[0].strokeWidth.reset();
-    });
-      */
+
 
 
     const interactivity = new carto.Interactivity(layer);
