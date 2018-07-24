@@ -53,10 +53,42 @@
     var sql = `SELECT l.pfaf_id, l.the_geom, l.the_geom_webmercator, l.cartodb_id, r.pfafid_30spfaf06, r.temporal_resolution, r.year, r.month, r.waterstress_label_dimensionless_30spfaf06, r.waterstress_category_dimensionless_30spfaf06, r.waterstress_score_dimensionless_30spfaf06, r.waterstress_raw_dimensionless_30spfaf06, r.avg1y_ols_ols10_weighted_waterstress_dimensionless_30spfaf06, r.avg1y_ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_ptotww_m_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l, y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r WHERE l.pfaf_id = r.pfafid_30spfaf06 AND r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
 
     // Suggestion from Stack Overflow
-    var sql2 = `SELECT l.pfaf_id, l.the_geom, l.the_geom_webmercator, l.cartodb_id, r.pfafid_30spfaf06, r.temporal_resolution, r.year, r.month, r.waterstress_label_dimensionless_30spfaf06, r.waterstress_category_dimensionless_30spfaf06, r.waterstress_score_dimensionless_30spfaf06, r.waterstress_raw_dimensionless_30spfaf06, r.avg1y_ols_ols10_weighted_waterstress_dimensionless_30spfaf06, r.avg1y_ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_waterstress_dimensionless_30spfaf06, r.ols_ols10_ptotww_m_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_simplified_v02 l INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r ON l.pfaf_id = r.pfafid_30spfaf06 WHERE r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
+    var sql2 = `SELECT l.pfaf_id,
+                       l.the_geom,
+                       l.the_geom_webmercator,
+                       l.cartodb_id,
+                       r.pfafid_30spfaf06,
+                       r.temporal_resolution,
+                       r.year,
+                       r.month,
+                       r.waterstress_label_dimensionless_30spfaf06,
+                       r.waterstress_category_dimensionless_30spfaf06,
+                       r.waterstress_score_dimensionless_30spfaf06,
+                       r.waterstress_raw_dimensionless_30spfaf06,
+                       r.avg1y_ols_ols10_weighted_waterstress_dimensionless_30spfaf06,
+                       r.avg1y_ols_ols10_waterstress_dimensionless_30spfaf06,
+                       r.ols_ols10_waterstress_dimensionless_30spfaf06,
+                       r.ols_ols10_ptotww_m_30spfaf06 
+                       FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_simplified_v02 l 
+                       INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r 
+                        ON l.pfaf_id = r.pfafid_30spfaf06 
+                       WHERE r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
+
+    // Minimizing query
+    var sql3 = `SELECT l.pfaf_id,
+                       l.cartodb_id,
+                       l.the_geom,
+                       l.the_geom_webmercator,
+                       r.waterstress_label_dimensionless_30spfaf06,
+                       r.waterstress_raw_dimensionless_30spfaf06
+                       FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_simplified_v02 l 
+                       INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r 
+                        ON l.pfaf_id = r.pfafid_30spfaf06 
+                       WHERE r.year = 2014 AND r.month =12 AND r.temporal_resolution = 'year'`
 
 
-    const source = new carto.source.SQL(sql2);
+
+    const source = new carto.source.SQL(sql3);
 
     const viz = new carto.Viz(`
       color: ramp(buckets($waterstress_label_dimensionless_30spfaf06,
