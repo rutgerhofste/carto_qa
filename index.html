@@ -144,7 +144,7 @@
 */
     // Minimizing query
     function get_query(temporal_resolution,year,month){
-      var sql = `SELECT l.pfaf_id, l.cartodb_id, l.the_geom, l.the_geom_webmercator, r.waterstress_label_dimensionless_30spfaf06,r.waterstress_raw_dimensionless_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r ON l.pfaf_id = r.pfafid_30spfaf06 WHERE r.year = ${year} AND r.month = ${month} AND r.temporal_resolution = '${temporal_resolution}'`
+      var sql = `SELECT l.pfaf_id, l.cartodb_id, l.the_geom, l.the_geom_webmercator, r.waterstress_raw_dimensionless_30spfaf06, r.waterstress_score_dimensionless_30spfaf06, r.waterstress_category_dimensionless_30spfaf06, r.waterstress_label_dimensionless_30spfaf06 FROM y2018m07d18_rh_upload_hydrobasin_carto_v01_v02 l INNER JOIN y2018m07d18_rh_qa_annual_weighted_unweighted_allbasins_v01_v02 r ON l.pfaf_id = r.pfafid_30spfaf06 WHERE r.year = ${year} AND r.month = ${month} AND r.temporal_resolution = '${temporal_resolution}'`
     return sql  
     }
 
@@ -172,6 +172,9 @@
       strokeColor:#4E4E4E
       @pfaf_id: $pfaf_id
       @waterstress_raw_dimensionless_30spfaf06: $waterstress_raw_dimensionless_30spfaf06
+      @waterstress_score_dimensionless_30spfaf06: $waterstress_score_dimensionless_30spfaf06
+      @waterstress_category_dimensionless_30spfaf06: $waterstress_category_dimensionless_30spfaf06
+      @waterstress_label_dimensionless_30spfaf06: $waterstress_label_dimensionless_30spfaf06
 
     `);
 
@@ -211,7 +214,11 @@
         new mapboxgl.Popup()
             .setLngLat([coords.lng, coords.lat])
             .setHTML(`<p>pfaf_id: ${feature.variables.pfaf_id.value}</p><br/>
-                      <p>waterstress_raw_dimensionless_30spfaf06: ${feature.variables.waterstress_raw_dimensionless_30spfaf06.value}</p>`)
+                      <p>waterstress_raw_dimensionless_30spfaf06: ${feature.variables.waterstress_raw_dimensionless_30spfaf06.value}</p>
+                      <p>waterstress_score_dimensionless_30spfaf06: ${feature.variables.waterstress_score_dimensionless_30spfaf06.value}</p>
+                      <p>waterstress_category_dimensionless_30spfaf06: ${feature.variables.waterstress_category_dimensionless_30spfaf06.value}</p>
+                      <p>waterstress_label_dimensionless_30spfaf06: ${feature.variables.waterstress_label_dimensionless_30spfaf06.value}</p>  
+                      `)
             .addTo(map);
     });
 
